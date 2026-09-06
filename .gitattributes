@@ -1,0 +1,11 @@
+# Normalise line endings — LF in the repo, checked out native.
+* text=auto eol=lf
+
+# Binary assets: never touch.
+*.pdf   binary
+*.docx  binary
+*.pptx  binary
+*.xlsx  binary
+*.png   binary
+*.jpg   binary
+*.onnx  binary

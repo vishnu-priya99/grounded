@@ -1,0 +1,18 @@
+.venv/
+__pycache__/
+*.pyc
+.grounded/
+tools/
+.env
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+*.egg-info/
+dist/
+build/
+data/uploads/
+eval/run.log
+# note: data/samples/ IS committed (PDF/DOCX/XLSX/PPTX/PNG/HTML/TXT/MD/CSV/PY)
+# so the demo runs with zero setup; regenerate the binaries with
+# `python scripts/make_samples.py`. The two real docs (exam, Meta 10-K) are
+# public documents included so the pipeline is testable out of the box.

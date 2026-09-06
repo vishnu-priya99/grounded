@@ -1,0 +1,89 @@
+================================================================
+Platform Team — Engineering Onboarding & Operations Runbook
+Last reviewed: 2026-08-04 by the Platform Lead
+Audience: new backend / infrastructure engineers
+================================================================
+
+0. TL;DR FIRST WEEK
+------------------------------------------------
+Day 1  - accounts, laptop, `make bootstrap`, read this doc
+Day 2  - pair on a starter ticket, first PR to a non-critical service
+Day 3  - shadow the on-call primary during standup + triage
+Day 4  - deploy your merged change to staging yourself
+Day 5  - retro with your onboarding buddy; file doc-gap issues
+
+1. LOCAL SETUP
+------------------------------------------------
+1.1  Clone the monorepo:  git clone git@git.acme.example:acme/monorepo.git
+1.2  Run `make bootstrap`. This installs the pinned Python (3.12) and Node (20)
+     toolchains via mise, sets up pre-commit hooks, and pulls container images.
+1.3  Copy `.env.sample` to `.env`. Ask your onboarding buddy for the dev database
+     password from the team vault. NEVER commit `.env` or paste secrets in Slack.
+1.4  `make dev` starts the API on http://localhost:8080 and the web app on
+     http://localhost:3000 with hot reload.
+1.5  `make test` runs the unit suite; `make test-integration` needs Docker running.
+     CI runs both on every push plus a lint + type-check gate.
+
+2. REPO LAYOUT
+------------------------------------------------
+services/        one directory per deployable service (api, worker, scheduler...)
+libs/            shared internal packages, versioned together
+infra/           Terraform + Helm charts, one environment per workspace
+tools/           developer CLIs and code-generation
+docs/            architecture decision records (ADRs) and runbooks
+
+3. BRANCHING & REVIEW
+------------------------------------------------
+3.1  Trunk-based. Branch off `main`, keep branches short-lived (< 2 days).
+3.2  Every PR needs one approving review and a green CI run. Changes to
+     `services/api` or `infra/` need review from a service owner (see CODEOWNERS).
+3.3  Squash-merge only. The PR title becomes the commit message; write it in the
+     imperative ("Add retry to billing webhook", not "added retries").
+3.4  Conventional-commit prefixes (feat:, fix:, chore:, docs:) drive the changelog.
+
+4. DEPLOY PROCESS
+------------------------------------------------
+4.1  Production is deployed from the `main` branch only. Feature branches never
+     deploy anywhere.
+4.2  Every merge to `main` triggers an automatic deploy to **staging**.
+4.3  **The production deploy itself is manual.** Run `make release` and approve the GitHub
+     Actions environment gate. The gate requires a second engineer's approval
+     between 09:00 and 18:00 local; outside those hours the on-call primary may
+     self-approve for hotfixes.
+4.4  Rollback:  `make release REF=<previous-good-sha>`. Rollbacks skip the
+     approval gate. Always post in #platform-incidents when you roll back.
+4.5  Database migrations are gated separately: `make migrate ENV=production`
+     runs only forward migrations and must be backward compatible for one release.
+
+5. ON-CALL
+------------------------------------------------
+5.1  Rotation is weekly: Monday 10:00 to the following Monday 10:00.
+5.2  Two people per rotation - a primary (handles pages) and a secondary
+     (backup, reviews the incident log, owns follow-up tickets).
+5.3  Acknowledge a page promptly. If an incident is not acknowledged within
+     **15 minutes**, it auto-escalates to the Platform Lead.
+5.4  Sev-1 (customer-facing outage): open a #incident channel, assign an Incident
+     Commander, post updates every 20 minutes, write a postmortem within 3 days.
+5.5  Sev-2/3: handle during business hours, no channel required, note in the log.
+
+6. OBSERVABILITY
+------------------------------------------------
+- Metrics: Prometheus + Grafana. Dashboards live in `infra/grafana/`.
+- Logs: structured JSON, shipped to the central store, 30-day retention.
+- Traces: OpenTelemetry, 10% sampling in production, 100% in staging.
+- SLOs: API availability 99.9% monthly; p95 latency < 300 ms for read endpoints.
+
+7. USEFUL CONTACTS
+------------------------------------------------
+Billing / invoice questions ....... billing@acme.example
+Security incidents ................ security@acme.example  (also page security on-call)
+Data requests / GDPR / DPA ........ privacy@acme.example
+IT / accounts / laptops .......... it@acme.example
+Platform Lead .................... see #platform-team channel topic
+
+8. FURTHER READING
+------------------------------------------------
+- docs/adr/                 - why the system looks the way it does
+- docs/runbooks/            - per-alert response playbooks
+- The Data Processing Addendum (data_processing_addendum.docx) - retention rules
+- The Billing & Refund Policy (refund_policy.md) - what support can and cannot promise

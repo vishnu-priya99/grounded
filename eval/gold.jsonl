@@ -1,0 +1,32 @@
+{"q": "What is the standard refund window for a subscription?", "kind": "doc", "expect_any": ["14 calendar days", "14 days", "14-day"]}
+{"q": "How long is the refund window for enterprise annual contracts?", "kind": "doc", "expect_any": ["30-day", "30 days", "30 calendar days"]}
+{"q": "How long is customer data retained after cancellation?", "kind": "doc", "expect_any": ["30 days"]}
+{"q": "How long does it take for a refund to be processed?", "kind": "doc", "expect_any": ["5-10 business days", "5 to 10 business days", "business days"]}
+{"q": "Are promotional credits ever refunded?", "kind": "doc", "expect_any": ["never", "no cash value", "not refunded"]}
+{"q": "Which branch do we deploy production from?", "kind": "doc", "expect_any": ["main"]}
+{"q": "How often does the on-call rotation change?", "kind": "doc", "expect_any": ["weekly", "week"]}
+{"q": "How quickly must an incident be acknowledged before escalation?", "kind": "doc", "expect_any": ["15 minutes", "15 min"]}
+{"q": "What was total Q3 revenue according to the business review?", "kind": "doc", "expect_any": ["2.66", "2.66m", "usd 2.66"]}
+{"q": "How long did the March outage last?", "kind": "doc", "expect_any": ["47 minutes", "47 min"]}
+{"q": "Which region had the strongest net revenue retention?", "kind": "doc", "expect_any": ["EMEA"]}
+{"q": "How long are audit logs retained under the data processing addendum?", "kind": "doc", "expect_any": ["12 months"]}
+{"q": "How much notice is given before a new sub-processor is added?", "kind": "doc", "expect_any": ["30 days"]}
+{"q": "What was the total Q3 revenue across all regions in the sales data?", "kind": "table", "expect_any": ["2,460,000", "2460000", "2.46 million", "2.46m", "$2,460,000"]}
+{"q": "Which region had the highest Q3 revenue?", "kind": "table", "expect_any": ["North America"]}
+{"q": "How many people are in the Engineering department?", "kind": "table", "expect_any": ["42"]}
+{"q": "Which departments spent more than their Q3 budget?", "kind": "table", "expect_any": ["Sales", "Marketing"]}
+{"q": "What does the reciprocal_rank_fusion function do?", "kind": "code", "expect_any": ["combine", "fuse", "fusion", "ranked"]}
+{"q": "What is the default value of k in reciprocal_rank_fusion?", "kind": "code", "expect_any": ["60"]}
+{"q": "What is the total amount due on invoice AC-2026-0417?", "kind": "image", "expect_any": ["4,600", "4600"]}
+{"q": "What caused the March 9 EMEA outage?", "kind": "doc", "expect_any": ["connection-pool", "connection pool", "pool ceiling", "db_pool_max", "20 instead of 200"]}
+{"q": "How many action items came out of the March 9 postmortem?", "kind": "doc", "expect_any": ["six", "6"]}
+{"q": "How much notice does Acme give before adding a sub-processor?", "kind": "doc", "expect_any": ["30 days", "30 days'"]}
+{"q": "Within how many hours does Acme notify customers of a personal data breach?", "kind": "doc", "expect_any": ["72 hours", "72"]}
+{"q": "What is the weighted pipeline value for the Negotiation stage?", "kind": "table", "expect_any": ["418,000", "418000", "418"]}
+{"q": "What was ending MRR in September 2026?", "kind": "table", "expect_any": ["838", "838,500", "838500"]}
+{"q": "What is the total due on invoice AC-2026-0392?", "kind": "image", "expect_any": ["71,176", "71176"]}
+{"q": "What is Acme's parental leave policy?", "kind": "unanswerable", "expect_refuse": true}
+{"q": "Who is the CEO of Acme Cloud?", "kind": "unanswerable", "expect_refuse": true}
+{"q": "What was Acme's Q4 revenue?", "kind": "unanswerable", "expect_refuse": true}
+{"q": "How many enterprise customers does Acme have in Antarctica?", "kind": "unanswerable", "expect_refuse": true}
+{"q": "What is the SLA uptime guarantee in the master services agreement?", "kind": "unanswerable", "expect_refuse": true}

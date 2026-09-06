@@ -1,0 +1,30 @@
+# Optional. `docker compose up` starts Ollama + the app.
+# First run: pull models into the ollama volume, e.g.
+#   docker compose exec ollama ollama pull qwen2.5:7b
+#   docker compose exec ollama ollama pull nomic-embed-text
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports: ["11434:11434"]
+    volumes: ["ollama:/root/.ollama"]
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    ports: ["8501:8501"]
+    environment:
+      OLLAMA_HOST: http://ollama:11434
+    volumes:
+      - grounded-store:/app/.grounded
+      - ./data:/app/data
+    depends_on:
+      ollama:
+        condition: service_healthy
+
+volumes:
+  ollama:
+  grounded-store:

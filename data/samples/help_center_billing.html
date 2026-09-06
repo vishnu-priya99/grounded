@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Billing, refunds &amp; cancellation — Acme Cloud Help Center</title>
+  <meta name="description" content="How billing, refunds, SLA service credits and cancellation work for Acme Cloud subscriptions.">
+  <link rel="canonical" href="https://help.acme.example/billing/refunds-and-cancellation">
+  <style>
+    :root { --ink: #1c2536; --accent: #2f6fb0; }
+    body { font: 16px/1.6 -apple-system, Segoe UI, Roboto, sans-serif; color: var(--ink); margin: 0; }
+    .wrap { max-width: 760px; margin: 0 auto; padding: 24px; }
+    nav.crumbs { font-size: 13px; color: #667; }
+    table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+    th, td { border: 1px solid #ccd; padding: 6px 10px; text-align: left; }
+    aside.note { border-left: 4px solid var(--accent); background: #eef4fb; padding: 12px 16px; }
+    footer { color: #889; font-size: 13px; border-top: 1px solid #dde; margin-top: 40px; padding-top: 16px; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="crumbs">
+      <a href="/">Help Center</a> &rsaquo;
+      <a href="/billing">Billing</a> &rsaquo;
+      <span>Refunds &amp; cancellation</span>
+    </nav>
+  </header>
+
+  <main class="wrap">
+    <article>
+      <h1>Billing, refunds &amp; cancellation</h1>
+      <p>
+        This article explains, in plain terms, how billing works for Acme Cloud
+        subscriptions, when you can get a refund, how SLA service credits are
+        applied, and how to cancel. It summarises the
+        <a href="/legal/billing-policy">Billing, Refund &amp; Cancellation Policy</a>
+        (v3.2, effective 12 March 2026); where the two differ, the policy and
+        your Order Form control.
+      </p>
+
+      <h2>Which plans this covers</h2>
+      <p>
+        It applies to all paid Acme Cloud plans &mdash; <strong>Starter</strong>,
+        <strong>Team</strong>, and <strong>Enterprise</strong> &mdash; bought on
+        the website, the in-product billing page, or a signed Order Form. It does
+        <em>not</em> cover one-off professional services (governed by the
+        Statement of Work), Marketplace purchases from third-party vendors, or
+        trial and sandbox accounts.
+      </p>
+
+      <h2>How billing works</h2>
+      <ul>
+        <li>Starter and Team are billed monthly or annually in advance; Enterprise is billed annually in advance.</li>
+        <li>Invoices are issued in USD by default. EUR and GBP are available on annual plans on request.</li>
+        <li>Prices exclude VAT, GST and sales tax; applicable tax is added at invoicing.</li>
+        <li>Card payments are charged on the invoice date. Invoiced customers pay within <strong>30 days</strong>. Accounts more than 15 days overdue may be suspended after written notice.</li>
+      </ul>
+
+      <h2>Refund window</h2>
+      <p>
+        You can request a <strong>full refund within 14 calendar days</strong> of
+        your initial purchase or of any renewal charge on <strong>Starter</strong>
+        or <strong>Team</strong>. <strong>Enterprise annual contracts</strong>
+        have a <strong>30-day</strong> refund window measured from the contract
+        start date. After the window closes we can still stop future renewals,
+        but the current charge is not refundable. We do not prorate partial
+        billing periods.
+      </p>
+
+      <h3>What is never refunded</h3>
+      <ul>
+        <li>Usage-based charges &mdash; storage above your plan quota, egress/bandwidth, seats added mid-cycle, and metered overage.</li>
+        <li>Accounts terminated for a breach of the Acceptable Use Policy or the MSA.</li>
+        <li>Promotional credits and discounts (no cash value).</li>
+        <li>Third-party pass-through costs already incurred on your behalf, such as dedicated IP allocations.</li>
+      </ul>
+
+      <h2>How to request a refund</h2>
+      <ol>
+        <li>Email <a href="mailto:billing@acme.example">billing@acme.example</a> from an address on the account.</li>
+        <li>Include your <strong>account ID</strong> and the <strong>invoice number</strong>.</li>
+        <li>Approved refunds go back to the original payment method in <strong>5&ndash;10 business days</strong> (card networks may add 3&ndash;5 days).</li>
+      </ol>
+      <p>If the original card is closed, we refund by bank transfer once we have verified ownership of the destination account.</p>
+
+      <h2>SLA service credits</h2>
+      <p>
+        Service credits are separate from refunds. If monthly API availability
+        for a paid service falls below the <strong>99.9%</strong> Service Level
+        Objective, you can claim a credit against a future invoice:
+      </p>
+      <table>
+        <thead>
+          <tr><th>Monthly availability</th><th>Service credit</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>99.0% &ndash; &lt; 99.9%</td><td>10% of the monthly fee for the affected service</td></tr>
+          <tr><td>95.0% &ndash; &lt; 99.0%</td><td>25% of the monthly fee</td></tr>
+          <tr><td>&lt; 95.0%</td><td>50% of the monthly fee</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Claims must be filed within 30 days of the end of the affected month and
+        include the incident dates and affected endpoints. Credits are capped at
+        50% of that month&rsquo;s fee and cannot be exchanged for cash.
+      </p>
+      <aside class="note">
+        <p>
+          <strong>Example.</strong> During the 47-minute EMEA API incident on
+          9 March 2026, monthly availability for the EMEA region stayed above
+          99.9%, so that month did not by itself trigger a credit. Customers who
+          were affected during a month that did breach the SLO should still file
+          a claim &mdash; see the published incident history for exact windows.
+        </p>
+      </aside>
+
+      <h2>Cancelling your subscription</h2>
+      <ul>
+        <li><strong>Starter and Team:</strong> cancel any time from <em>Settings &rarr; Billing &rarr; Cancel plan</em>. Access continues to the end of the paid period; the plan does not renew.</li>
+        <li><strong>Enterprise:</strong> give written notice to your account manager at least <strong>30 days</strong> before the renewal date. Auto-renewal is the default unless your Order Form says otherwise.</li>
+      </ul>
+
+      <h3>What happens to your data</h3>
+      <p>
+        Customer content is retained for <strong>30 days</strong> after the
+        subscription ends, during which the account can be reactivated with data
+        intact. After 30 days the content is permanently deleted; backups are
+        purged on a rolling 35-day cycle. You can export at any time before
+        deletion from the in-product export tool or the Data API.
+      </p>
+
+      <h2>Price changes</h2>
+      <p>
+        We give <strong>60 days&rsquo;</strong> notice of any list-price change,
+        which takes effect at your next renewal. If you do not accept an
+        increase, you may cancel before the renewal date without penalty.
+      </p>
+
+      <h2>Billing disputes</h2>
+      <p>
+        Raise any billing dispute within <strong>60 days</strong> of the invoice
+        date. Undisputed portions of an invoice remain payable on the original
+        terms.
+      </p>
+
+      <h2>Still need help?</h2>
+      <table>
+        <tbody>
+          <tr><td>Billing, invoices, refunds</td><td><a href="mailto:billing@acme.example">billing@acme.example</a></td></tr>
+          <tr><td>Contract and renewal questions</td><td>your Acme account manager</td></tr>
+          <tr><td>Security or abuse reports</td><td><a href="mailto:security@acme.example">security@acme.example</a></td></tr>
+          <tr><td>Data requests / GDPR / DPA</td><td><a href="mailto:privacy@acme.example">privacy@acme.example</a></td></tr>
+        </tbody>
+      </table>
+    </article>
+  </main>
+
+  <footer>
+    <p>Last updated 14 March 2026 &middot; Acme Cloud, Inc., 500 Market Street, San Francisco, CA 94105.</p>
+    <p><a href="/legal/billing-policy">Full billing policy</a> &middot; <a href="/legal/msa">Master Subscription Agreement</a> &middot; <a href="/status">Status &amp; incident history</a></p>
+  </footer>
+
+  <script>
+    // analytics stub — must not appear in extracted text
+    window.dataLayer = window.dataLayer || [];
+    function track(evt){ window.dataLayer.push({event: evt, ts: Date.now()}); }
+    track('help_article_view');
+  </script>
+</body>
+</html>

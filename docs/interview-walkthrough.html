@@ -1,0 +1,442 @@
+<title>Grounded: Walkthrough</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --bg:#EFF2F4; --surface:#FFFFFF; --surface-2:#E6EAED;
+    --ink:#1A2129; --ink-soft:#57626D; --ink-faint:#8B95A0;
+    --line:#D3D9DE; --line-strong:#B7C0C7;
+    --accent:#B15E28; --accent-ink:#FFFFFF; --accent-soft:#F3E2D5;
+    --verify:#2F7A5C; --verify-soft:#DDEEE6;
+    --warn:#B08A00; --warn-soft:#F3ECD2;
+    --refuse:#A6432F; --refuse-soft:#F3DAD4;
+    --shadow: 0 1px 2px rgba(20,26,32,.06), 0 8px 24px -12px rgba(20,26,32,.18);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#12161B; --surface:#181D24; --surface-2:#1F252D;
+      --ink:#E8ECEF; --ink-soft:#9AA5B0; --ink-faint:#69737D;
+      --line:#2A323B; --line-strong:#39424C;
+      --accent:#E0925A; --accent-ink:#1A1109; --accent-soft:#2E2015;
+      --verify:#5FBF95; --verify-soft:#173226;
+      --warn:#D9B84A; --warn-soft:#332C10;
+      --refuse:#E08072; --refuse-soft:#331E1A;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#12161B; --surface:#181D24; --surface-2:#1F252D;
+    --ink:#E8ECEF; --ink-soft:#9AA5B0; --ink-faint:#69737D;
+    --line:#2A323B; --line-strong:#39424C;
+    --accent:#E0925A; --accent-ink:#1A1109; --accent-soft:#2E2015;
+    --verify:#5FBF95; --verify-soft:#173226;
+    --warn:#D9B84A; --warn-soft:#332C10;
+    --refuse:#E08072; --refuse-soft:#331E1A;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+  }
+  .wrap{ max-width:1040px; margin:0 auto; padding:56px 28px 96px; }
+  ::selection{ background:var(--accent-soft); color:var(--ink); }
+
+  .mono{ font-family:"IBM Plex Mono",ui-monospace,Consolas,monospace; }
+  .tnum{ font-variant-numeric:tabular-nums; }
+
+  /* ---------- header ---------- */
+  header{ display:flex; flex-direction:column; gap:14px; margin-bottom:52px; }
+  .kicker{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:10px;
+  }
+  .kicker::before{ content:""; width:22px; height:1px; background:var(--accent); display:inline-block; }
+  h1{
+    font-size:clamp(32px,5vw,46px); font-weight:700; margin:0; letter-spacing:-.01em;
+    text-wrap:balance;
+  }
+  .thesis{
+    font-size:17px; color:var(--ink-soft); max-width:66ch; margin:0;
+  }
+  .thesis strong{ color:var(--ink); font-weight:600; }
+  .pills{ display:flex; flex-wrap:wrap; gap:8px; margin-top:4px; }
+  .pill{
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; letter-spacing:.02em;
+    border:1px solid var(--line-strong); color:var(--ink-soft);
+    padding:4px 10px; border-radius:100px; background:var(--surface);
+  }
+
+  section{ margin-top:64px; }
+  .sec-head{ display:flex; align-items:baseline; gap:12px; margin-bottom:20px; }
+  .sec-num{ font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--ink-faint); }
+  h2{ font-size:13px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; margin:0; color:var(--ink-soft); }
+  .sec-note{ font-size:14px; color:var(--ink-faint); margin:0 0 0 auto; }
+
+  /* ---------- diagram card ---------- */
+  figure.diagram{
+    margin:0; background:var(--surface); border:1px solid var(--line);
+    border-radius:14px; box-shadow:var(--shadow); overflow:hidden;
+  }
+  figure.diagram .svg-scroll{ overflow-x:auto; }
+  figure.diagram svg{ display:block; width:100%; height:auto; min-width:640px; }
+  figcaption{
+    padding:14px 22px; border-top:1px solid var(--line); font-size:13px;
+    color:var(--ink-soft); background:var(--surface-2);
+  }
+  svg text{ font-family:"IBM Plex Mono",monospace; }
+  .lbl-title{ font-family:"IBM Plex Sans",sans-serif; font-weight:600; }
+  .arrow-label{ fill:var(--ink-faint); font-size:11px; }
+  .box-title{ fill:var(--ink); font-size:12.5px; font-weight:600; }
+  .box-sub{ fill:var(--ink-faint); font-size:10.5px; }
+
+  /* ---------- RRF panel ---------- */
+  .rrf-grid{ display:grid; grid-template-columns: 1.1fr 1.4fr; gap:22px; }
+  @media (max-width:760px){ .rrf-grid{ grid-template-columns:1fr; } }
+  .rrf-formula{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:26px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:16px;
+  }
+  .formula{
+    font-family:"IBM Plex Mono",monospace; font-size:19px; background:var(--surface-2);
+    border:1px solid var(--line); border-radius:10px; padding:16px 18px; color:var(--ink);
+  }
+  .formula .k{ color:var(--accent); }
+  .rrf-formula p{ margin:0; font-size:13.5px; color:var(--ink-soft); }
+  .tablewrap{ overflow-x:auto; border:1px solid var(--line); border-radius:14px; background:var(--surface); box-shadow:var(--shadow); }
+  table{ width:100%; border-collapse:collapse; font-size:13px; }
+  th,td{ padding:10px 14px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th:first-child,td:first-child{ text-align:left; }
+  th{ font-family:"IBM Plex Mono",monospace; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-weight:500; background:var(--surface-2); }
+  tr:last-child td{ border-bottom:none; }
+  td.chunk{ font-family:"IBM Plex Mono",monospace; font-weight:600; }
+  tr.winner td{ background:var(--verify-soft); }
+  tr.winner td.chunk{ color:var(--verify); }
+
+  /* ---------- comparison ---------- */
+  .compare{
+    display:grid; grid-template-columns:1fr auto 1fr; gap:0;
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .compare .col{ padding:22px 26px; display:flex; flex-direction:column; gap:14px; }
+  .compare .col.base{ color:var(--ink-soft); }
+  .compare .divider{ width:1px; background:var(--line); }
+  .compare .col-h{ font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px; }
+  .compare .col.base .col-h{ color:var(--ink-faint); }
+  .compare .col.grounded .col-h{ color:var(--accent); }
+  .row{ font-size:14px; padding-bottom:12px; border-bottom:1px dashed var(--line); }
+  .row:last-child{ border-bottom:none; padding-bottom:0; }
+  .row b{ display:block; font-weight:600; color:var(--ink); font-size:13.5px; margin-bottom:2px; }
+  .compare .col.grounded .row b{ color:var(--ink); }
+
+  /* ---------- specs ---------- */
+  .specs{ display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; }
+  .spec{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:18px 20px; box-shadow:var(--shadow);
+  }
+  .spec .v{ font-family:"IBM Plex Mono",monospace; font-size:24px; font-weight:600; color:var(--ink); }
+  .spec .v small{ font-size:13px; font-weight:500; color:var(--ink-faint); }
+  .spec .l{ font-size:12px; color:var(--ink-soft); margin-top:4px; }
+
+  /* ---------- QA cheat sheet ---------- */
+  .qa{ display:flex; flex-direction:column; gap:2px; }
+  .qa-item{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px;
+    padding:18px 22px; box-shadow:var(--shadow);
+  }
+  .qa-item + .qa-item{ margin-top:12px; }
+  .q{ font-weight:600; font-size:14.5px; display:flex; gap:10px; align-items:baseline; }
+  .q::before{ content:"Q"; font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--accent-ink); background:var(--accent); width:18px; height:18px; border-radius:5px; display:inline-flex; align-items:center; justify-content:center; flex:none; }
+  .a{ font-size:14px; color:var(--ink-soft); margin-top:8px; padding-left:28px; }
+  .a code{ font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--surface-2); padding:1px 5px; border-radius:4px; color:var(--ink); }
+
+  footer{ margin-top:72px; padding-top:20px; border-top:1px solid var(--line); font-size:12px; color:var(--ink-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px; }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="kicker">local-first document intelligence</div>
+    <h1>Grounded</h1>
+    <p class="thesis">Every agent past the router only ever sees text pulled from <strong>your</strong> documents, never the model's own knowledge, and a verification agent checks that constraint held, sentence by sentence, before you see an answer.</p>
+    <div class="pills">
+      <span class="pill">torch-free · no Docker · no GPU</span>
+      <span class="pill">local index, embeddings, SQL</span>
+      <span class="pill">ships on Claude · one switch to local 7B</span>
+      <span class="pill">hybrid retrieval</span>
+      <span class="pill">self-verifying</span>
+    </div>
+  </header>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num mono">01</span>
+      <h2>Ingestion: file to searchable index</h2>
+      <p class="sec-note mono">runs once, per file</p>
+    </div>
+    <figure class="diagram">
+      <div class="svg-scroll">
+        <svg viewBox="0 0 980 300" role="img" aria-label="Ingestion pipeline: a file is type-checked, then either parsed into headings, tables and paragraphs and chunked, or read as a spreadsheet into a DuckDB table plus a summary card; both paths end embedded into the same Qdrant and BM25 index.">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+          <g stroke="currentColor" fill="none" opacity=".55">
+            <line x1="150" y1="150" x2="196" y2="150" stroke-width="1.5" marker-end="url(#ar)"/>
+            <line x1="330" y1="150" x2="330" y2="80"  stroke-width="1.5"/>
+            <line x1="330" y1="80"  x2="366" y2="80"  stroke-width="1.5" marker-end="url(#ar)"/>
+            <line x1="330" y1="150" x2="330" y2="220" stroke-width="1.5"/>
+            <line x1="330" y1="220" x2="366" y2="220" stroke-width="1.5" marker-end="url(#ar)"/>
+            <line x1="546" y1="80" x2="592" y2="80" stroke-width="1.5" marker-end="url(#ar)"/>
+            <line x1="546" y1="220" x2="592" y2="220" stroke-width="1.5" marker-end="url(#ar)"/>
+            <line x1="726" y1="80" x2="770" y2="80" stroke-width="1.5"/>
+            <line x1="726" y1="220" x2="770" y2="220" stroke-width="1.5"/>
+            <line x1="770" y1="80" x2="770" y2="140" stroke-width="1.5"/>
+            <line x1="770" y1="220" x2="770" y2="160" stroke-width="1.5"/>
+            <line x1="770" y1="150" x2="812" y2="150" stroke-width="1.5" marker-end="url(#ar)"/>
+          </g>
+          <text x="173" y="110" class="arrow-label" text-anchor="middle">extension + magic bytes</text>
+          <text x="456" y="40" class="arrow-label" text-anchor="middle">PDF · DOCX · PPTX · HTML · image</text>
+          <text x="456" y="180" class="arrow-label" text-anchor="middle">CSV · XLSX · TSV</text>
+          <text x="659" y="130" class="arrow-label" text-anchor="middle">split on existing tags</text>
+          <text x="659" y="170" class="arrow-label" text-anchor="middle">schema + 15-row preview</text>
+          <text x="775" y="150" class="arrow-label" text-anchor="middle">embed →</text>
+
+          <g>
+            <rect x="20" y="122" width="130" height="56" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+            <text x="85" y="145" text-anchor="middle" class="box-title">file uploaded</text>
+            <text x="85" y="162" text-anchor="middle" class="box-sub">disk only</text>
+          </g>
+          <g>
+            <rect x="196" y="122" width="134" height="56" rx="9" fill="var(--surface-2)" stroke="var(--line-strong)"/>
+            <text x="263" y="145" text-anchor="middle" class="box-title">type check</text>
+            <text x="263" y="162" text-anchor="middle" class="box-sub">plain python</text>
+          </g>
+
+          <g>
+            <rect x="366" y="52" width="180" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="456" y="75" text-anchor="middle" class="box-title">parse</text>
+            <text x="456" y="92" text-anchor="middle" class="box-sub">tags heading/table/code</text>
+          </g>
+          <g>
+            <rect x="592" y="52" width="134" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="659" y="75" text-anchor="middle" class="box-title">chunk</text>
+            <text x="659" y="92" text-anchor="middle" class="box-sub">tables never split</text>
+          </g>
+
+          <g>
+            <rect x="366" y="192" width="180" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="456" y="215" text-anchor="middle" class="box-title">DuckDB table</text>
+            <text x="456" y="232" text-anchor="middle" class="box-sub">real rows, queryable</text>
+          </g>
+          <g>
+            <rect x="592" y="192" width="134" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="659" y="215" text-anchor="middle" class="box-title">table card</text>
+            <text x="659" y="232" text-anchor="middle" class="box-sub">discovery only</text>
+          </g>
+
+          <g>
+            <rect x="812" y="112" width="150" height="76" rx="10" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="887" y="138" text-anchor="middle" class="box-title" fill="var(--ink)">index</text>
+            <text x="887" y="156" text-anchor="middle" class="box-sub">Qdrant · dense</text>
+            <text x="887" y="171" text-anchor="middle" class="box-sub">BM25 · sparse</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Prose files (incl. HTML, via <span class="mono">html2text</span>) are parsed → put through structural passes (numbered-run split, shared-stimulus grouping, chart caption + data-table extraction) → chunked on their own tags → embedded. Spreadsheets fork: real rows go to DuckDB for SQL, a small schema + preview card goes to the same index so it's discoverable by a plain-English question.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num mono">02</span>
+      <h2>Answering: six agents, one mostly-linear graph</h2>
+      <p class="sec-note mono">runs once, per question</p>
+    </div>
+    <figure class="diagram">
+      <div class="svg-scroll">
+        <svg viewBox="0 0 1080 300" role="img" aria-label="Question answering pipeline: router, then retrieval (skipped for chitchat), then table agent (skipped when no table is needed), then synthesis, then verification, ending in pass, warn, or refuse.">
+          <defs>
+            <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+            </marker>
+          </defs>
+
+          <g stroke="currentColor" fill="none" opacity=".55">
+            <line x1="146" y1="150" x2="188" y2="150" stroke-width="1.5" marker-end="url(#ar2)"/>
+            <line x1="334" y1="150" x2="376" y2="150" stroke-width="1.5" marker-end="url(#ar2)"/>
+            <line x1="522" y1="150" x2="564" y2="150" stroke-width="1.5" marker-end="url(#ar2)"/>
+            <line x1="710" y1="150" x2="752" y2="150" stroke-width="1.5" marker-end="url(#ar2)"/>
+            <line x1="898" y1="150" x2="940" y2="150" stroke-width="1.5" marker-end="url(#ar2)"/>
+          </g>
+          <text x="167" y="200" class="arrow-label" text-anchor="middle">sub-queries</text>
+          <text x="355" y="200" class="arrow-label" text-anchor="middle">top-8 passages</text>
+          <text x="543" y="200" class="arrow-label" text-anchor="middle">SQL result</text>
+          <text x="731" y="200" class="arrow-label" text-anchor="middle">draft + citations</text>
+
+          <g stroke="var(--accent)" fill="none" opacity=".8" stroke-dasharray="3 4">
+            <path d="M 167 108 C 167 55, 350 55, 350 108" stroke-width="1.4" marker-end="url(#ar2)"/>
+          </g>
+          <text x="258" y="45" class="arrow-label" text-anchor="middle" fill="var(--accent)">chitchat → skip</text>
+
+          <g stroke="var(--accent)" fill="none" opacity=".8" stroke-dasharray="3 4">
+            <path d="M 360 108 C 360 55, 543 55, 543 108" stroke-width="1.4" marker-end="url(#ar2)"/>
+          </g>
+          <text x="451" y="45" class="arrow-label" text-anchor="middle" fill="var(--accent)">no table → skip</text>
+
+          <g>
+            <rect x="20" y="122" width="126" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="83" y="145" text-anchor="middle" class="box-title">router</text>
+            <text x="83" y="162" text-anchor="middle" class="box-sub">intent + rewrite</text>
+          </g>
+          <g>
+            <rect x="188" y="122" width="146" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="261" y="145" text-anchor="middle" class="box-title">retrieval</text>
+            <text x="261" y="162" text-anchor="middle" class="box-sub">dense + sparse · RRF</text>
+          </g>
+          <g>
+            <rect x="376" y="122" width="146" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="449" y="145" text-anchor="middle" class="box-title">table agent</text>
+            <text x="449" y="162" text-anchor="middle" class="box-sub">text-to-SQL, self-fix</text>
+          </g>
+          <g>
+            <rect x="564" y="122" width="146" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="637" y="145" text-anchor="middle" class="box-title">synthesis</text>
+            <text x="637" y="162" text-anchor="middle" class="box-sub">writes cited draft</text>
+          </g>
+          <g>
+            <rect x="752" y="122" width="146" height="56" rx="9" fill="var(--surface)" stroke="var(--line-strong)"/>
+            <text x="825" y="145" text-anchor="middle" class="box-title">verification</text>
+            <text x="825" y="162" text-anchor="middle" class="box-sub">checks each sentence</text>
+          </g>
+
+          <g>
+            <rect x="940" y="72" width="120" height="34" rx="8" fill="var(--verify-soft)" stroke="var(--verify)"/>
+            <text x="1000" y="94" text-anchor="middle" class="box-sub" fill="var(--verify)">≥0.55 · pass</text>
+            <rect x="940" y="133" width="120" height="34" rx="8" fill="var(--warn-soft)" stroke="var(--warn)"/>
+            <text x="1000" y="155" text-anchor="middle" class="box-sub" fill="var(--warn)">&lt;0.55 · warn</text>
+            <rect x="940" y="194" width="120" height="34" rx="8" fill="var(--refuse-soft)" stroke="var(--refuse)"/>
+            <text x="1000" y="216" text-anchor="middle" class="box-sub" fill="var(--refuse)">uncited · refuse</text>
+          </g>
+
+          <g stroke="var(--accent)" fill="none" opacity=".8" stroke-dasharray="3 4">
+            <path d="M 825 178 C 825 250, 700 250, 640 250" stroke-width="1.4" marker-end="url(#ar2)"/>
+          </g>
+          <text x="770" y="242" class="arrow-label" text-anchor="middle" fill="var(--accent)">refused + positional MCQ/puzzle</text>
+          <g>
+            <rect x="494" y="232" width="146" height="46" rx="9" fill="var(--accent-soft)" stroke="var(--accent)"/>
+            <text x="567" y="252" text-anchor="middle" class="box-title" fill="var(--ink)">fallback agent</text>
+            <text x="567" y="268" text-anchor="middle" class="box-sub">solve · vote · label 🧮</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>A mostly-linear LangGraph state machine. Dashed arcs are the real conditional edges: chitchat skips retrieval, a non-table question skips SQL, and a <em>refused</em> answer to a positional MCQ or number-pattern puzzle routes to a sixth <strong>fallback agent</strong> that answers from the model's own knowledge (solved several times, majority vote) and labels the result unmistakably as not from your documents.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num mono">03</span>
+      <h2>Hybrid retrieval: how the two rankers get fused</h2>
+    </div>
+    <div class="rrf-grid">
+      <div class="rrf-formula">
+        <div class="formula">score(chunk) = <span class="k">Σ</span> 1 / (<span class="k">60</span> + rank)</div>
+        <p>Every chunk gets scored once per list it appears in, dense (Qdrant, meaning) and sparse (BM25, exact words), then the two scores are summed. Rank 1 in a list is worth ≈0.0164; rank 5 is worth ≈0.0154. The gap is deliberately small.</p>
+        <p><strong style="color:var(--ink)">Why it matters:</strong> a chunk that's merely good in both signals beats one that's spectacular in only one, which is the entire point of running two rankers instead of trusting embeddings alone.</p>
+      </div>
+      <div class="tablewrap">
+        <table class="tnum">
+          <thead><tr><th>chunk</th><th>dense rank</th><th>sparse rank</th><th>fused score</th></tr></thead>
+          <tbody>
+            <tr class="winner"><td class="chunk">A</td><td>2</td><td>1</td><td>0.0325</td></tr>
+            <tr><td class="chunk">B</td><td>1</td><td>3</td><td>0.0323</td></tr>
+            <tr><td class="chunk">C</td><td>4</td><td>2</td><td>0.0318</td></tr>
+            <tr><td class="chunk">D</td><td>3</td><td>5</td><td>0.0313</td></tr>
+            <tr><td class="chunk">E</td><td>5</td><td>4</td><td>0.0310</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num mono">04</span>
+      <h2>Not just another RAG demo</h2>
+    </div>
+    <div class="compare">
+      <div class="col base">
+        <div class="col-h">baseline chatbot</div>
+        <div class="row"><b>Single dense search</b>misses exact terms: invoice numbers, error codes, IDs.</div>
+        <div class="row"><b>Rows dumped into the prompt</b>spreadsheet math is the model's guesswork.</div>
+        <div class="row"><b>Charts ignored or OCR'd</b>a bar chart becomes a jumble of numbers.</div>
+        <div class="row"><b>"According to the documents…"</b>no way to check the claim.</div>
+        <div class="row"><b>Hopes for the best</b>hallucination is silent, undetected.</div>
+      </div>
+      <div class="divider"></div>
+      <div class="col grounded">
+        <div class="col-h">grounded</div>
+        <div class="row"><b>Dense + BM25, RRF-fused</b>meaning and exact terms both count.</div>
+        <div class="row"><b>Real SQL over DuckDB</b>the query is shown as provenance.</div>
+        <div class="row"><b>Charts read to a data table</b>native XML for slides, vision for PDF charts, with a searchable caption.</div>
+        <div class="row"><b>Inline <span class="mono">[n]</span> citations</b>file, page, exact snippet, every claim.</div>
+        <div class="row"><b>Verification agent</b>checks each sentence, scores confidence, can refuse.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num mono">05</span>
+      <h2>Running the numbers</h2>
+    </div>
+    <div class="specs tnum">
+      <div class="spec"><div class="v">16<small> GB</small></div><div class="l">RAM budget, no GPU</div></div>
+      <div class="spec"><div class="v">27<small>/27</small></div><div class="l">answerable eval items correct</div></div>
+      <div class="spec"><div class="v">5<small>/5</small></div><div class="l">unanswerable → refused correctly</div></div>
+      <div class="spec"><div class="v">83<small></small></div><div class="l">unit tests passing (ruff + mypy clean)</div></div>
+      <div class="spec"><div class="v">40–55<small>s</small></div><div class="l">median latency / query, CPU 7B (~12s on Claude)</div></div>
+      <div class="spec"><div class="v">768<small>-dim</small></div><div class="l">nomic-embed-text vectors</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-head">
+      <span class="sec-num mono">06</span>
+      <h2>If they push on a decision</h2>
+    </div>
+    <div class="qa">
+      <div class="qa-item">
+        <div class="q">Why not Docker, or a hosted vector DB?</div>
+        <div class="a">Target machine has no Docker/WSL2, and the original brief was open-source-only, fully local. A hosted vector DB (even a free tier) would ship your whole index off-box and need internet to work at all. The embedded Qdrant + DuckDB keep the index and the data on the machine regardless of which LLM is behind <code>llm.py</code>.</div>
+      </div>
+      <div class="qa-item">
+        <div class="q">Why embedded Qdrant instead of your own flat numpy index?</div>
+        <div class="a">Both work; embedded Qdrant is real production-grade ANN search with the same one-process-at-a-time constraint a numpy index avoided by construction. <code>.grounded/qdrant/</code> takes an exclusive lock, the trade I made knowingly to get a real vector engine under the hood.</div>
+      </div>
+      <div class="qa-item">
+        <div class="q">How do you know it isn't hallucinating?</div>
+        <div class="a">The verification agent re-reads every sentence of the draft against exactly what it cited, computes <code>0.55·support + 0.20·coverage + 0.25·retrieval</code>, and refuses outright if nothing checked out. It's a gate on the output, not a hope.</div>
+      </div>
+      <div class="qa-item">
+        <div class="q">Why a 7B local model, not GPT-4-class?</div>
+        <div class="a">The reasoning ceiling is real. It's mitigated (not solved) by strong hybrid retrieval, query decomposition, structured JSON output, and the verification gate doing work a bigger model would do implicitly. The original brief was open-source-only; a follow-up authorised paid keys, so the repo now ships on Claude behind <code>LLM_PROVIDER=anthropic</code> (<code>claude-haiku-4-5</code> for routing/synthesis, <code>claude-sonnet-5</code> for the fallback solve), and nothing above <code>llm.py</code> changed.</div>
+      </div>
+      <div class="qa-item">
+        <div class="q">How do charts get answered? Isn't that just OCR noise?</div>
+        <div class="a">A native slide chart's data is read straight from its XML. A PDF chart is found by a geometric detector (a row of same-width, varying-height bars) and rendered to a vision model, which returns a plain-language caption <em>then</em> a data table. The caption is what makes <em>"Family of Apps revenue in Q4 2024"</em> retrieve a chunk the filing labelled <code>FoA Revenue</code>. When a question names "the chart", other documents' charts are dropped from the context.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Grounded: multi-agent document chat, local-first data layer</span>
+    <span class="mono">router → retrieval → table → synthesis → verification → (fallback)</span>
+  </footer>
+
+</div>

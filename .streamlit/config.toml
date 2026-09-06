@@ -1,0 +1,6 @@
+# Project Streamlit config — keeps the CLI quiet.
+[browser]
+gatherUsageStats = false          # no telemetry
+
+[logger]
+hideWelcomeMessage = true         # suppresses the "Install Streamlit skills" nudge

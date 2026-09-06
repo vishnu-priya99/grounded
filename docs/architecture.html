@@ -1,0 +1,964 @@
+<title>Grounded Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --bg: #FBFBFD;
+    --surface: #F2F3F8;
+    --surface-2: #E9EAF2;
+    --border: #DCDEEA;
+    --border-strong: #C6C9DA;
+    --ink: #1A1B23;
+    --muted: #5C5E70;
+    --faint: #8A8DA0;
+    --accent: #454FD0;
+    --accent-ink: #3239A8;
+    --accent-soft: #EBECFB;
+    --ok: #2E8B63;
+    --warn: #A9791F;
+    --bad: #C6423E;
+    --shadow: 0 1px 2px rgba(26, 27, 35, 0.04), 0 8px 24px rgba(26, 27, 35, 0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0F1017;
+      --surface: #181A24;
+      --surface-2: #21232F;
+      --border: #2C2E3D;
+      --border-strong: #3B3E50;
+      --ink: #E8E9F1;
+      --muted: #9A9DB0;
+      --faint: #71748696;
+      --accent: #8C94F2;
+      --accent-ink: #AAB0F7;
+      --accent-soft: #1D2030;
+      --ok: #46B888;
+      --warn: #D19E52;
+      --bad: #E1665F;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0F1017;
+    --surface: #181A24;
+    --surface-2: #21232F;
+    --border: #2C2E3D;
+    --border-strong: #3B3E50;
+    --ink: #E8E9F1;
+    --muted: #9A9DB0;
+    --faint: #717486;
+    --accent: #8C94F2;
+    --accent-ink: #AAB0F7;
+    --accent-soft: #1D2030;
+    --ok: #46B888;
+    --warn: #D19E52;
+    --bad: #E1665F;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "Newsreader", Georgia, "Times New Roman", serif;
+    font-size: 1.09rem;
+    line-height: 1.62;
+    font-optical-sizing: auto;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(2rem, 5vw, 4.5rem) clamp(1.15rem, 4vw, 2.5rem) 6rem;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2.4rem;
+    margin-bottom: 3rem;
+  }
+  .eyebrow {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    margin: 0 0 1.1rem;
+  }
+  h1 {
+    font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.6rem, 7vw, 4.1rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+    margin: 0 0 0.7rem;
+  }
+  .lede {
+    font-size: clamp(1.15rem, 2.4vw, 1.4rem);
+    color: var(--muted);
+    max-width: 40ch;
+    margin: 0 0 2rem;
+    font-style: italic;
+  }
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.6rem;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.76rem;
+  }
+  .meta span {
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    padding: 0.28rem 0.7rem;
+    color: var(--muted);
+    background: var(--surface);
+  }
+
+  /* ---------- layout ---------- */
+  .layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  nav.toc { display: none; }
+  @media (min-width: 1040px) {
+    .layout { grid-template-columns: 190px minmax(0, 70ch); justify-content: center; gap: 4rem; }
+    nav.toc { display: block; position: sticky; top: 2rem; align-self: start; }
+  }
+  nav.toc ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    counter-reset: toc;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.78rem;
+    line-height: 1.5;
+  }
+  nav.toc li { counter-increment: toc; margin-bottom: 0.55rem; }
+  nav.toc a {
+    color: var(--muted);
+    text-decoration: none;
+    display: block;
+    border-left: 2px solid var(--border);
+    padding-left: 0.7rem;
+  }
+  nav.toc a::before { content: counter(toc, decimal-leading-zero) "  "; color: var(--faint); }
+  nav.toc a:hover { color: var(--accent-ink); border-left-color: var(--accent); }
+
+  /* ---------- sections ---------- */
+  main { counter-reset: sec; }
+  section { margin-bottom: 3.6rem; scroll-margin-top: 2rem; }
+  section > h2 {
+    counter-increment: sec;
+    font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.5rem, 3.6vw, 2rem);
+    letter-spacing: -0.015em;
+    line-height: 1.15;
+    text-wrap: balance;
+    margin: 0 0 1.1rem;
+    padding-top: 0.4rem;
+  }
+  section > h2::before {
+    content: counter(sec, decimal-leading-zero);
+    display: block;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.78rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    color: var(--accent-ink);
+    margin-bottom: 0.5rem;
+  }
+  h3 {
+    font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: 1.12rem;
+    letter-spacing: -0.01em;
+    margin: 2rem 0 0.6rem;
+  }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent-ink); text-underline-offset: 2px; }
+  strong { font-weight: 600; }
+  ul { padding-left: 1.15rem; margin: 0 0 1rem; }
+  li { margin-bottom: 0.4rem; }
+  li::marker { color: var(--faint); }
+
+  code, .mono {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.85em;
+  }
+  p code, li code, td code {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.05em 0.35em;
+  }
+
+  /* ---------- callout ---------- */
+  .note {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    background: var(--surface);
+    border-radius: 6px;
+    padding: 1rem 1.15rem;
+    margin: 1.4rem 0;
+    font-size: 0.98rem;
+  }
+  .note b {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    display: block;
+    margin-bottom: 0.35rem;
+  }
+
+  /* ---------- tables ---------- */
+  .table-scroll { overflow-x: auto; margin: 1.4rem 0; border: 1px solid var(--border); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+  th, td { text-align: left; padding: 0.7rem 0.9rem; vertical-align: top; border-bottom: 1px solid var(--border); }
+  thead th {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--surface);
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---------- stage flow diagram ---------- */
+  .flow {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--surface);
+    padding: 1.5rem 1.25rem;
+    margin: 1.6rem 0;
+  }
+  .stage { display: grid; grid-template-columns: 88px 1fr; gap: 0.9rem; align-items: center; }
+  .stage-label {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--faint);
+    text-align: right;
+  }
+  .stage-nodes { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+  .node {
+    background: var(--bg);
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    padding: 0.6rem 0.85rem;
+    font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.3;
+    flex: 1 1 auto;
+    min-width: 140px;
+  }
+  .node small {
+    display: block;
+    font-family: "Newsreader", serif;
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+  .node.accent { border-color: var(--accent); background: var(--accent-soft); }
+  .node.ok { border-color: var(--ok); }
+  .node.bad { border-color: var(--bad); }
+  .flow-arrow {
+    grid-column: 2;
+    color: var(--faint);
+    font-size: 0.9rem;
+    line-height: 1;
+    padding: 0.4rem 0;
+  }
+  .flow-arrow.split::after { content: "\25BC   \25BC"; letter-spacing: 2rem; }
+  .flow-arrow::after { content: "\25BC"; }
+
+  @media (max-width: 520px) {
+    .stage { grid-template-columns: 1fr; gap: 0.4rem; }
+    .stage-label { text-align: left; }
+    .flow-arrow { grid-column: 1; }
+  }
+
+  /* ---------- pipeline (horizontal) ---------- */
+  .pipeline { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0.5rem; margin: 1.6rem 0 0.8rem; }
+  .pipeline .step {
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 7px;
+    padding: 0.6rem 0.8rem;
+    font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+  }
+  .pipeline .sep { align-self: center; color: var(--faint); font-family: "JetBrains Mono", monospace; }
+
+  .footer-note {
+    margin-top: 4rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--faint);
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+  }
+
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+  html { scroll-behavior: smooth; }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Architecture Note &middot; AI Engineer Case Study</p>
+    <h1>Grounded</h1>
+    <p class="lede">A local-first, multi-agent document chat that shows its sources and checks its own work.</p>
+    <div class="meta">
+      <span>LangGraph</span>
+      <span>Embedded Qdrant + BM25 + RRF</span>
+      <span>DuckDB</span>
+      <span>Streamlit</span>
+      <span>Ships on Claude &middot; one switch to local Ollama</span>
+      <span>Torch-free &middot; no Docker &middot; no GPU</span>
+      <span>16 GB RAM</span>
+    </div>
+  </header>
+
+  <div class="layout">
+    <nav class="toc" aria-label="Contents">
+      <ol>
+        <li><a href="#thesis">The problem &amp; the thesis</a></li>
+        <li><a href="#scope">Scope of the build</a></li>
+        <li><a href="#hardware">Hardware envelope</a></li>
+        <li><a href="#ingestion">Ingestion pipeline</a></li>
+        <li><a href="#retrieval">Retrieval &amp; indexing</a></li>
+        <li><a href="#runtime">The multi-agent runtime</a></li>
+        <li><a href="#grounding">Grounding &amp; verification</a></li>
+        <li><a href="#decisions">Design decisions &amp; trade-offs</a></li>
+        <li><a href="#stack">Tech stack, by layer</a></li>
+        <li><a href="#eval">Evaluation</a></li>
+        <li><a href="#hardening">What contact with real documents changed</a></li>
+        <li><a href="#limits">Limitations &amp; future work</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <section id="thesis">
+        <h2>The problem &amp; the thesis</h2>
+        <p>
+          File chat is a solved-looking problem with an unsolved core: the answers are
+          often <em>plausible but wrong</em>, the citations are vague, and structured
+          data gets flattened into prose the moment it enters the prompt. The brief asks
+          for something "accurate, fast, and trustworthy enough to compete with Copilot."
+        </p>
+        <p>
+          The thesis of <strong>Grounded</strong> is that trust is an architectural
+          property, not a prompt. Three commitments drive every decision:
+        </p>
+        <ul>
+          <li><strong>Every claim is traceable.</strong> Answers carry inline <code>[n]</code> markers that resolve to a file, a page, and the exact snippet used.</li>
+          <li><strong>Structured data stays structured.</strong> Spreadsheet questions become SQL executed over the real data, the query is shown, not hidden. Charts are read into a data table, not left as pixels.</li>
+          <li><strong>The system checks itself.</strong> A verification agent tests each sentence against its cited sources and produces a confidence score; below threshold it hedges or says <em>"I don't know."</em> Synthesis is barred from inventing a figure by back-calculating from a percentage.</li>
+        </ul>
+        <p>
+          The index, embeddings, SQL and vector store all live on the user's
+          machine, your files and your index never leave it. The LLM is the
+          one seam: the original brief was open-source-only, so it was built and
+          works on a local 7B; a follow-up allowed paid keys, so it ships pointed
+          at Claude, and <code>LLM_PROVIDER=ollama</code> flips it back. The
+          abstraction in <span class="mono">llm.py</span> means nothing else in the
+          system changes.
+        </p>
+      </section>
+
+      <section id="scope">
+        <h2>Scope of the build</h2>
+        <p>
+          The brief rewards "a smaller system that is robust and well-explained" over a
+          broad, fragile one. The line is drawn deliberately.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr><th>Tier</th><th>Included</th><th>Handling</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Core</strong></td><td>PDF, DOCX, PPTX, TXT, MD</td><td>Layout-aware parse &rarr; structured, metadata-carrying chunks</td></tr>
+              <tr><td><strong>Core</strong></td><td>HTML</td><td><span class="mono">html2text</span> &rarr; Markdown &rarr; the Markdown path; <span class="mono">&lt;script&gt;</span> / <span class="mono">&lt;style&gt;</span> dropped</td></tr>
+              <tr><td><strong>Core</strong></td><td>CSV, XLSX, TSV</td><td>Registered as SQL tables in DuckDB; queried, not dumped</td></tr>
+              <tr><td><strong>Core</strong></td><td>Charts, bar / column / line / pie</td><td>Native chart XML for slides; a geometric detector + vision for PDF charts &rarr; a captioned data table</td></tr>
+              <tr><td><strong>Core</strong></td><td>PNG, JPG, scanned PDF</td><td>RapidOCR for text (scanned PDF: first 50 pages); a vision model only when the image or page is a chart, diagram or puzzle</td></tr>
+              <tr><td><strong>Core</strong></td><td>Source code files</td><td>Language-tagged, definition-boundary splitting; read &amp; explain</td></tr>
+              <tr><td>Deferred</td><td>Audio / video</td><td>Whisper transcription, a clean add at the ingest router</td></tr>
+              <tr><td>Deferred</td><td>Live URL crawling</td><td>Single-page <span class="mono">trafilatura</span> first</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <b>What is intentionally cut</b>
+          Bounding-box PDF highlighting (metadata is captured at ingest, viewer wiring is
+          not); the low-confidence retrieval loop-back (supported by the graph, disabled
+          for predictable latency); a dedicated code model (folded into the main LLM);
+          auth / multi-tenancy.
+        </div>
+      </section>
+
+      <section id="hardware">
+        <h2>Hardware envelope</h2>
+        <p>
+          The target machine is a <strong>16 GB laptop with no discrete GPU</strong>
+          (Intel Core 7, CPU-only inference, no WSL2 so no Docker). Every component was
+          picked against that budget, the architecture is textbook, only the
+          implementations are lighter, and the whole stack is <strong>torch-free</strong>.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Concern</th><th>Frontier-hardware pick</th><th>This build</th></tr></thead>
+            <tbody>
+              <tr><td>Vector store</td><td>Qdrant server (Docker)</td><td><strong>Embedded Qdrant</strong> (<span class="mono">qdrant-client</span>, <span class="mono">path=</span> local mode), a real ANN index and payload store, as a folder on disk, no server process</td></tr>
+              <tr><td>Sparse retrieval</td><td>SPLADE / BGE-M3 sparse</td><td><strong>BM25 in-process</strong> (<span class="mono">rank-bm25</span>), rebuilt from the Qdrant payloads on startup</td></tr>
+              <tr><td>Embeddings</td><td>BGE-M3 (PyTorch, ~2 GB)</td><td><strong>nomic-embed-text</strong> via Ollama, ~0.5 GB, no PyTorch</td></tr>
+              <tr><td>Parsing</td><td>Docling (+PyTorch, ~2.5 GB)</td><td><strong>PyMuPDF + python-docx + python-pptx + html2text + RapidOCR</strong> (ONNX), torch-free</td></tr>
+              <tr><td>Reranker</td><td>bge-reranker-v2-m3 cross-encoder</td><td><strong>Off by default</strong>; optional ONNX cross-encoder via <span class="mono">fastembed</span></td></tr>
+              <tr><td>Vision</td><td>7B VLM resident, per query</td><td><strong>At ingest, plus one re-read at answer time</strong>: images and charts read once and stored as text; the saved image is kept for the fallback agent</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="note">
+          <b>Peak memory (local path)</b>
+          <span class="mono">qwen2.5:7b</span> resident (~6 GB) + Python app, ONNX OCR,
+          DuckDB, embedded Qdrant, BM25 (~1.5 GB) + Streamlit (~0.4 GB) + OS and one
+          browser tab (~4 GB) &asymp; <strong>~12 GB of 16 GB</strong>. Reading a batch of
+          charts at ingest briefly swaps the 7B out for a ~3 GB VLM, a one-shot
+          cost, never during chat. On the Claude path the local models drop out entirely.
+          On-disk footprint, models included: ~12&ndash;15 GB.
+        </div>
+        <div class="note">
+          <b>One operational cost</b>
+          Embedded Qdrant takes an exclusive lock on <span class="mono">.grounded/qdrant/</span>
+          while a process holds it, so the Streamlit app, the CLI, and the eval
+          harness can't run against the same store at once. DuckDB is opened read-only for
+          querying and only briefly read-write during ingest, so its reads can overlap.
+        </div>
+      </section>
+
+      <section id="ingestion">
+        <h2>Ingestion pipeline</h2>
+        <p>
+          Every file type is normalised into one <span class="mono">DocModel</span>,
+          an ordered list of elements, each tagged with <code>kind</code>
+          (heading / paragraph / table / figure / code), <code>page</code>,
+          <code>section_path</code>, and (for enumerated items) an <code>ordinal</code>.
+          Downstream code never branches on file type again.
+        </p>
+
+        <div class="pipeline">
+          <div class="step">File</div><div class="sep">&rsaquo;</div>
+          <div class="step">Type router</div><div class="sep">&rsaquo;</div>
+          <div class="step">Parser</div><div class="sep">&rsaquo;</div>
+          <div class="step">DocModel</div><div class="sep">&rsaquo;</div>
+          <div class="step">enumerate.py</div><div class="sep">&rsaquo;</div>
+          <div class="step">Layout-aware chunker</div><div class="sep">&rsaquo;</div>
+          <div class="step">Index</div>
+        </div>
+
+        <div class="flow" role="img" aria-label="Ingestion flow: a file is routed by type to a parser, normalised into a DocModel, put through enumerate.py structural passes, chunked, and written to the stores.">
+          <div class="stage">
+            <div class="stage-label">Route</div>
+            <div class="stage-nodes"><div class="node accent">Type router<small>extension first, magic bytes as a fallback for a mislabelled file &middot; size / page guardrails</small></div></div>
+          </div>
+          <div class="flow-arrow split"></div>
+          <div class="stage">
+            <div class="stage-label">Parse</div>
+            <div class="stage-nodes">
+              <div class="node">PyMuPDF / python-docx / python-pptx<small>PDF, DOCX, PPTX, headings, tables, page numbers; PPTX also reads native chart XML</small></div>
+              <div class="node">html2text<small>HTML &rarr; Markdown &rarr; the Markdown path</small></div>
+              <div class="node">pandas &rarr; DuckDB<small>CSV, XLSX, TSV, one table per sheet</small></div>
+              <div class="node">RapidOCR<small>images and scans; a vision model is added only for charts, diagrams and visual puzzles</small></div>
+              <div class="node">Code splitter<small>top-level definition boundaries</small></div>
+            </div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="stage">
+            <div class="stage-label">Normalise</div>
+            <div class="stage-nodes"><div class="node">DocModel<small>ordered elements + {file, page, section_path, kind, ordinal}</small></div></div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="stage">
+            <div class="stage-label">Structure</div>
+            <div class="stage-nodes"><div class="node">enumerate.py<small>per-item split &middot; option de-scramble &middot; shared-stimulus + stimulus-body folding &middot; puzzle ordinals &middot; reading-order</small></div></div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="stage">
+            <div class="stage-label">Chunk</div>
+            <div class="stage-nodes"><div class="node">Layout-aware chunker<small>split on the pre-existing tags only &middot; tables / code / figures / items kept atomic &middot; breadcrumb prepended</small></div></div>
+          </div>
+          <div class="flow-arrow split"></div>
+          <div class="stage">
+            <div class="stage-label">Store</div>
+            <div class="stage-nodes">
+              <div class="node">Embedded Qdrant + BM25<small>dense vectors + payloads on disk; the lexical index is rebuilt in-process from those payloads</small></div>
+              <div class="node">DuckDB<small>registered tables for SQL</small></div>
+              <div class="node">Table cards<small>schema + a 15-row preview, embedded so a table is discoverable by search</small></div>
+            </div>
+          </div>
+        </div>
+
+        <h3>Layout-aware chunking</h3>
+        <p>
+          Chunks are cut on the tags the parser already produced, not fixed windows.
+          Tables, code blocks, figures and enumerated items are never split. Each chunk is
+          prefixed with its breadcrumb (<span class="mono">Doc title &rsaquo; H1 &rsaquo; H2</span>)
+          so an isolated passage still carries context, and every chunk stores
+          <code>{source_file, page, section_path, kind, image_ref, ordinal}</code>,
+          the raw material for citations. The chunker never re-analyses layout itself.
+        </p>
+
+        <h3>Enumerated content (<span class="mono">ingest/enumerate.py</span>)</h3>
+        <p>
+          A run of four or more sequentially-numbered items (an MCQ exam, a policy's
+          numbered clauses) is re-expanded into one <span class="mono">list_item</span>
+          chunk per item, each with its <code>ordinal</code>, so <em>"what's the answer to
+          question 24?"</em> pins exactly that chunk and can't be answered from a
+          lexically-similar neighbour. Around that:
+        </p>
+        <ul>
+          <li><strong>Option de-scramble</strong>: a two-column PDF option layout reads <span class="mono">a c b d</span>; put back in order.</li>
+          <li><strong>Shared-stimulus grouping</strong>: a set introduced by <em>"Answer Questions 24&ndash;28 based on the following line graph"</em> becomes one semantic unit: every member carries, as <code>shared_context</code>, the stimulus <em>body</em> (the <span class="mono">Figure 1: &hellip;</span> caption and the chart's transcribed values) plus every sibling's stem, so any one question carries the chart the whole set depends on, independent of what retrieval happens to surface.</li>
+          <li><strong>Puzzle ordinals</strong>: image number-pattern puzzles with no number of their own get synthetic ordinals continuing the main run, ordered by their position on the page.</li>
+        </ul>
+        <p>Every pass no-ops when its pattern is absent.</p>
+
+        <h3>Spreadsheets as data, not text</h3>
+        <p>
+          Each sheet is loaded with pandas and registered as a read-only DuckDB table.
+          Column names are normalised to <span class="mono">snake_case</span>
+          (<span class="mono">Q3 Budget ($)</span> &rarr; <span class="mono">q3_budget</span>)
+          so LLM-written SQL never needs quoting. A synthetic <strong>table card</strong> (columns, dtypes, a 15-row preview
+          labelled <em>"preview only, N rows"</em>) is embedded alongside the
+          document chunks so the router can discover <em>"there is a table that can answer this"</em>. The card is
+          discovery-only; the Table agent later queries the real DuckDB table directly.
+        </p>
+
+        <h3>Charts</h3>
+        <p>
+          A native PowerPoint chart carries its data (categories and named series) in a dedicated XML part, so
+          <span class="mono">_pptx_chart_element</span>
+          reads it exactly into a Markdown table plus a caption, with no rendering. A
+          chart in a PDF is pixels. A geometric detector
+          (<span class="mono">_has_bar_chart</span>: four or more same-width,
+          evenly-spaced, bottom-aligned filled rectangles <em>of varying height</em>, since a
+          row of equal boxes is a label strip and not bars) finds genuine chart
+          pages and renders only those to a vision model, which returns a plain-language
+          caption <em>then</em> the data table:
+        </p>
+        <div class="note">
+          <b>Why the caption matters</b>
+          <em>"This chart shows Family of Apps (FoA) revenue worldwide by quarter from
+          Q4&nbsp;2022 to Q4&nbsp;2024&hellip;"</em>: without it, a chunk the
+          filing labelled <span class="mono">FoA Revenue</span> with rows dated
+          <span class="mono">Dec 31, 2024</span> does not retrieve for a question that
+          says <em>"Family of Apps revenue in Q4 2024"</em>. The caption carries the words
+          a reader actually uses. Vision is gated (bar-chart shape, or heavily-drawn and
+          text-light) and capped at four pages per document, so a 10-K's dozens of ruled
+          <em>table</em> pages are never sent.
+        </div>
+
+        <h3>Built for files it has never seen</h3>
+        <p>
+          Ingestion assumes messy, arbitrary uploads. Each file is processed in
+          isolation, one failure returns a readable error and the rest of the batch
+          still ingests. Guard rails: size ceiling, page cap (with an in-line note),
+          per-page <span class="mono">try/except</span>, password-protected detection, OCR
+          fallback for scans, wide-table / big-sheet caps, CSV delimiter and encoding
+          sniffing with bad-line skipping, EXIF-aware image downscaling, and a placeholder
+          element when a document yields no text at all. Covered by
+          <span class="mono">tests/test_reliability.py</span>.
+        </p>
+      </section>
+
+      <section id="retrieval">
+        <h2>Retrieval &amp; indexing</h2>
+        <p>
+          Retrieval is hybrid by default. <strong>nomic-embed-text</strong> (served by
+          Ollama, with asymmetric <span class="mono">search_document:</span> /
+          <span class="mono">search_query:</span> prefixes) gives the dense vector,
+          searched in <strong>embedded Qdrant</strong>; an in-process
+          <strong>BM25</strong> index, rebuilt from the Qdrant payloads on load, gives the
+          lexical ranking. The two ranked lists are fused in application code with
+          <strong>Reciprocal Rank Fusion</strong> (<span class="mono">score = &Sigma; 1/(k + rank)</span>,
+          <span class="mono">k = 60</span>), a chunk ranked decently in both lists
+          beats one ranked first in only one.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Stage</th><th>Operation</th><th>Result size</th></tr></thead>
+            <tbody>
+              <tr><td class="num">1</td><td>Dense ANN search (Qdrant) &amp; BM25 lexical search, once per router sub-query</td><td class="num">top-k each</td></tr>
+              <tr><td class="num">2</td><td>Reciprocal Rank Fusion, merged by best score across sub-queries</td><td class="num">merged</td></tr>
+              <tr><td class="num">3</td><td>Ordinal pinning, for a positional question, the exact enumerated-item chunk(s) forced to the front</td><td class="num">pinned + a few</td></tr>
+              <tr><td class="num">4</td><td>Cross-encoder rerank (ONNX), <em>opt-in, GPU recommended</em></td><td class="num">top 8</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>
+          <strong>Scope-aware.</strong> The UI's <em>"Restrict answers to"</em> selection
+          flows through as <code>source_files</code>: retrieval filters candidates, and
+          the Table agent only sees, and can only query, spreadsheets in
+          that set. <strong>Promotion:</strong> if a spreadsheet card matches search even
+          though the router didn't ask for tables, retrieval promotes the question to
+          <code>table_qa</code> anyway.
+        </p>
+      </section>
+
+      <section id="runtime">
+        <h2>The multi-agent runtime</h2>
+        <p>
+          Orchestration is a <strong>LangGraph</strong> state machine over a typed,
+          Pydantic-validated state object. Each agent is a pure node: it reads state, does
+          one job, writes state, and no-ops when the router's decision makes it
+          irrelevant. The graph is mostly linear
+          (<span class="mono">router &rarr; retrieval &rarr; table &rarr; synthesis &rarr; verification</span>),
+          then a <strong>conditional edge to a sixth agent</strong>,
+          <span class="mono">fallback</span>, and END.
+        </p>
+
+        <div class="flow" role="img" aria-label="Agent flow: user query to the router, which fans out to a retrieval agent and a table agent; their outputs converge on synthesis, then verification, which emits a cited answer, a hedge, or routes a refused positional question to the fallback agent.">
+          <div class="stage">
+            <div class="stage-label">Input</div>
+            <div class="stage-nodes"><div class="node">User query <small>+ conversation summary</small></div></div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="stage">
+            <div class="stage-label">Plan</div>
+            <div class="stage-nodes"><div class="node accent">Router / Planner<small>intent &middot; history-aware rewrite &middot; sub-queries &middot; <span class="mono">ordinals</span> for positional questions</small></div></div>
+          </div>
+          <div class="flow-arrow split"></div>
+          <div class="stage">
+            <div class="stage-label">Gather</div>
+            <div class="stage-nodes">
+              <div class="node">Retrieval Agent<small>hybrid search + ordinal pinning &rarr; passages with citation metadata</small></div>
+              <div class="node">Table / Data Agent<small>schema-constrained text-to-SQL over scoped tables, execute, self-correct &rarr; rows + SQL</small></div>
+            </div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="stage">
+            <div class="stage-label">Compose</div>
+            <div class="stage-nodes"><div class="node">Synthesis Agent<small>grounded answer, inline <span class="mono">[n]</span> markers; SQL result leads, foreign charts dropped</small></div></div>
+          </div>
+          <div class="flow-arrow"></div>
+          <div class="stage">
+            <div class="stage-label">Check</div>
+            <div class="stage-nodes"><div class="node accent">Citation / Verification Agent<small>per-sentence support (embedding + word recall) &rarr; confidence; prune weak cites</small></div></div>
+          </div>
+          <div class="flow-arrow split"></div>
+          <div class="stage">
+            <div class="stage-label">Return</div>
+            <div class="stage-nodes">
+              <div class="node ok">Answer + citations + confidence panel</div>
+              <div class="node bad">Hedge &middot; &ldquo;not found in your documents&rdquo;</div>
+              <div class="node">&rarr; Fallback Agent<small>only if refused + a positional MCQ / puzzle</small></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Agent</th><th>Reads</th><th>Writes</th><th>Model</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Router / Planner</strong></td>
+                <td>query, conversation summary, the live document + puzzle-ordinal list</td>
+                <td><code>intent</code>, <code>sub_queries</code>, <code>needs_tables</code>, <code>ordinals</code>, <code>rewritten_question</code></td>
+                <td>Haiku 4.5 (structured output), ordinals are LLM-extracted, no regex</td>
+              </tr>
+              <tr>
+                <td><strong>Retrieval</strong></td>
+                <td>sub-queries, <code>source_files</code>, <code>ordinals</code></td>
+                <td>ranked passages + <code>{file, page, section}</code>; pins the targeted item(s)</td>
+                <td>nomic-embed + BM25 (+ optional rerank)</td>
+              </tr>
+              <tr>
+                <td><strong>Table / Data</strong></td>
+                <td>question, the scoped table schema</td>
+                <td>result rows + the executed SQL (provenance)</td>
+                <td>Haiku 4.5 &rarr; DuckDB (SELECT / WITH only)</td>
+              </tr>
+              <tr>
+                <td><strong>Synthesis</strong></td>
+                <td>passages, table results</td>
+                <td><code>SynthesisResult(found: bool, answer: str)</code> with inline markers</td>
+                <td>Haiku 4.5</td>
+              </tr>
+              <tr>
+                <td><strong>Verification</strong></td>
+                <td>draft answer, cited sources, retrieval scores</td>
+                <td>final answer, pruned citation list, confidence, per-sentence report</td>
+                <td>nomic-embed cosine + content-word recall (no LLM judge)</td>
+              </tr>
+              <tr>
+                <td><strong>Fallback</strong> <span class="mono">conditional</span></td>
+                <td>the pinned MCQ / puzzle chunk (+ its image)</td>
+                <td>an answer from model knowledge, voted, labelled <em>not from your documents</em></td>
+                <td>Sonnet 5 (<code>FALLBACK_MODEL</code>), <code>FALLBACK_VOTES</code> = 3</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Synthesis does more than concatenate</h3>
+        <p>
+          A successful SQL result <strong>leads</strong> the prompt, labelled the
+          authoritative answer. Without that step, a lone computed figure buried under
+          prose from other files was treated as noise and refused. When the router called the
+          question <code>table_qa</code>, the retrieved passages (all cross-document,
+          spreadsheet chunks are stripped upstream) are <strong>dropped</strong> so
+          unrelated text can't outvote the computation. When the question says
+          <em>"the chart"</em> / <em>"the graph"</em>, the top hit fixes which document's
+          chart it means and <strong>other documents' chart chunks are dropped</strong>,
+          because <em>"the chart"</em> is one chart, not four. Prose from other files
+          always stays.
+        </p>
+
+        <h3>The Fallback agent, the one deliberate exception</h3>
+        <p>
+          It fires only when verification refused <em>and</em> the question targets a
+          specific numbered item <em>and</em> that item is a multiple-choice question with
+          no answer key (or an image number-pattern puzzle). It solves each item from the
+          model's own knowledge <code>FALLBACK_VOTES</code> times and takes the majority;
+          if the votes disagree it says so; it may answer <em>"cannot determine
+          confidently"</em>. For a chart-backed item it re-reads the actual saved image.
+          The output is always labelled <strong>&#x1F9EE; not from your documents</strong>.
+        </p>
+
+        <h3>Conversation memory</h3>
+        <p>
+          Per session: the last four turns verbatim plus an LLM-folded running summary of
+          everything older. Its consumer is the router's rewrite, resolving
+          <em>"what about the second one?"</em> into a standalone question before any
+          retrieval. It lives in the UI layer only; the CLI is stateless by design.
+        </p>
+      </section>
+
+      <section id="grounding">
+        <h2>Grounding &amp; verification</h2>
+        <p>This is the part that is meant to beat the baseline.</p>
+        <h3>Citations</h3>
+        <p>
+          The synthesis prompt supplies numbered context blocks and asks for an
+          <code>[n]</code> marker on every factual sentence. Small models comply unevenly,
+          so a second pass <strong>back-fills a marker</strong> onto any uncited sentence
+          by content-word overlap with the context blocks. Each marker resolves to the
+          chunk's stored metadata, so the UI renders <em>file &middot; page &middot;
+          snippet</em> on click. Page-level today; the bounding box is captured at ingest
+          and is the next wiring job.
+        </p>
+        <h3>Self-verification</h3>
+        <p>
+          For each sentence, the verification agent scores support against every source it
+          cites, blending <strong>embedding cosine</strong> (nomic-embed) with
+          <strong>content-word recall</strong>; a citation whose SQL query executed is
+          treated as ground truth, with a further boost when the sentence's numbers appear
+          in the result. This is deterministic and fast, a better fit for a
+          CPU-only box than asking a small model to adjudicate entailment, which it does
+          unreliably in both directions. Citations that barely match are dropped and their
+          inline markers stripped.
+        </p>
+        <h3>Synthesis is barred from guessing</h3>
+        <p>
+          Two failure modes, both observed and both closed in the prompt:
+          an <strong>unmarked MCQ or puzzle</strong> in the context is not an answer
+          (restating an option is a guess, so <code>found</code> is set to false); and a
+          figure must not be <strong>back-calculated</strong> from a percentage change, a
+          growth rate, or a ratio, retrieval surfacing <em>"revenue grew 22%"</em>
+          prose instead of the segment table once had the model invent the base figure,
+          with verification rubber-stamping it.
+        </p>
+        <h3>Confidence &amp; graceful refusal</h3>
+        <p>
+          One score (capped at 0.95) blends support coverage, citation coverage, and the
+          top retrieval score. At or above <code>CONFIDENCE_THRESHOLD</code> the answer
+          ships with a green badge; below it, it is prefixed with a low-confidence note.
+          If the model cited nothing, or nothing checks out and retrieval was also weak,
+          or nothing was retrieved at all, the answer is replaced with an explicit
+          <em>"I couldn't find this in your documents."</em> The full per-sentence report
+          sits in an expander.
+        </p>
+      </section>
+
+      <section id="decisions">
+        <h2>Design decisions &amp; trade-offs</h2>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Decision</th><th>Why</th><th>What it costs</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>LangGraph over CrewAI / AutoGen</td>
+                <td>Explicit state machine &rarr; deterministic routing, cheap retry loops, streaming, reviewable code</td>
+                <td>Less "autonomous" agent behaviour, which this problem does not need.</td>
+              </tr>
+              <tr>
+                <td>DuckDB SQL over a pandas agent</td>
+                <td>Read-only, no code execution, fast on large files, SQL is its own provenance; also scopes cleanly to the active file set</td>
+                <td>Some exotic reshaping is awkward to express in SQL</td>
+              </tr>
+              <tr>
+                <td>Embedded Qdrant, not a server or a hand-rolled index</td>
+                <td>A real ANN index, payload storage and filtering, and zero ops. It's a folder on disk; an earlier build used a flat numpy index; Qdrant is the honest choice for a "vector engine under the hood"</td>
+                <td>An exclusive single-writer lock: app, CLI and eval can't share the store at once</td>
+              </tr>
+              <tr>
+                <td>PyMuPDF instead of Docling</td>
+                <td><span class="mono">find_tables()</span> + font-size heading inference cover born-digital docs; torch-free saves ~2.5 GB, better spent on the LLM</td>
+                <td>Weaker on complex layouts; heading detection is heuristic</td>
+              </tr>
+              <tr>
+                <td>HTML via <span class="mono">html2text</span>, not a parser tree or a browser</td>
+                <td>A ~50 KB pure-Python lib converts to Markdown, which reuses the whole Markdown path, headings, tables, list structure for free</td>
+                <td>Full web pages carry nav / footer noise (harmless low-signal paragraphs)</td>
+              </tr>
+              <tr>
+                <td>Slide charts from XML, PDF charts by vision</td>
+                <td>A native chart's data is exact in its XML part, so it needs no rendering. A PDF chart is pixels, so a geometric detector sends only real chart pages to vision, with a caption that makes the chunk findable</td>
+                <td>The detector is geometric, so an unusual chart style can slip past it; vision adds an ingest-time API call (capped at 4 / doc)</td>
+              </tr>
+              <tr>
+                <td>Embedding-based verification, not an LLM judge</td>
+                <td>Deterministic, ~1 embedding call per turn, no extra round-trip; a small judge mislabels entailment both ways</td>
+                <td>Weaker on paraphrase far from source wording; a fabricated number cited to a <em>figure</em> chunk (not a SQL result) isn't number-checked</td>
+              </tr>
+              <tr>
+                <td>One provider seam in <span class="mono">llm.py</span></td>
+                <td>Built open-source-only on a local 7B (honest to the original brief); a follow-up allowed keys, so it ships on Claude with <code>LLM_PROVIDER=ollama</code> flipping it straight back, every store below the LLM is local either way</td>
+                <td>The frontier path is billed per token; the 7B reasons more weakly on hard documents</td>
+              </tr>
+              <tr>
+                <td>Reranking opt-in</td>
+                <td>Big precision gain when a GPU is available</td>
+                <td>Too slow on CPU to leave on by default</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="stack">
+        <h2>Tech stack, by layer</h2>
+        <p>Each layer has one job and one or two libraries doing it. Nothing pulls in PyTorch.</p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Layer</th><th>Responsibility</th><th>What does it</th></tr></thead>
+            <tbody>
+              <tr><td>Parsing / ingestion</td><td>file bytes &rarr; a normalised <span class="mono">DocModel</span> of typed elements</td><td>PyMuPDF &middot; python-docx &middot; python-pptx (incl. chart XML) &middot; html2text &middot; RapidOCR-ONNX &middot; pandas + openpyxl</td></tr>
+              <tr><td>Layout &amp; enumeration</td><td>elements &rarr; retrieval-ready chunks; numbered-run split, option de-scramble, shared-stimulus grouping, puzzle ordinals</td><td><span class="mono">ingest/enumerate.py</span> + <span class="mono">ingest/chunking.py</span>, pure structural code, no ML</td></tr>
+              <tr><td>Embeddings</td><td>text &rarr; 768-d vectors</td><td><span class="mono">nomic-embed-text</span> via Ollama</td></tr>
+              <tr><td>Vector store</td><td>dense ANN search + payload storage / filtering</td><td>Embedded Qdrant (<span class="mono">qdrant-client</span>, local mode)</td></tr>
+              <tr><td>Sparse retrieval</td><td>exact-keyword ranking</td><td><span class="mono">rank-bm25</span> (in-process <span class="mono">BM25Okapi</span>)</td></tr>
+              <tr><td>Fusion</td><td>merge dense + sparse</td><td>hand-rolled Reciprocal Rank Fusion (<span class="mono">k = 60</span>)</td></tr>
+              <tr><td>Structured-data queries</td><td>spreadsheet questions &rarr; answers</td><td>DuckDB, read-only <span class="mono">SELECT</span> / <span class="mono">WITH</span> only</td></tr>
+              <tr><td>Agent orchestration</td><td>router &rarr; retrieval &rarr; table &rarr; synthesis &rarr; verification &rarr; (conditional) fallback</td><td>LangGraph, explicit typed state machine</td></tr>
+              <tr><td>LLM access</td><td>chat, structured (Pydantic&rarr;JSON) output, vision, per-call cost tracking</td><td>provider-agnostic <span class="mono">llm.py</span> &rarr; Ollama (<span class="mono">qwen2.5:7b</span>) or Anthropic (<span class="mono">claude-haiku-4-5</span> + <span class="mono">claude-sonnet-5</span>)</td></tr>
+              <tr><td>Reranking <em>(optional, off)</em></td><td>cross-encoder re-score of the fused top-k</td><td><span class="mono">fastembed</span> ONNX cross-encoder</td></tr>
+              <tr><td>Schemas &amp; config</td><td>typed models everywhere; one env-backed settings object</td><td>pydantic / pydantic-settings</td></tr>
+              <tr><td>UI</td><td>chat, upload, scope filter, citation panel, cost meter</td><td>Streamlit</td></tr>
+              <tr><td>Evaluation &amp; tests</td><td>32-item gold set + 83 unit tests + a hand battery</td><td>custom harness &middot; pytest &middot; ruff &middot; mypy</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="eval">
+        <h2>Evaluation</h2>
+        <p>
+          A 32-item gold set (<span class="mono">eval/gold.jsonl</span>) runs over the
+          synthetic corpus, 27 answerable across doc / table / code / image
+          (including the multi-column PDF and DOCX tables), and 5 deliberately
+          unanswerable. <span class="mono">make eval</span> runs it and writes
+          <span class="mono">eval/results.md</span>.
+        </p>
+        <div class="note">
+          <b>Result</b>
+          Answerable correct <strong>27/27</strong> &middot; refusal accuracy
+          <strong>5/5</strong> &middot; mean confidence 0.93 &middot; median latency
+          ~40&ndash;55&nbsp;s/query on a local 7B (CPU), ~10&ndash;15&nbsp;s on the Claude path.
+          The synthetic corpus is deliberately clean, so a near-perfect score reads as
+          "the pipeline is wired correctly end to end", not a hard accuracy number,
+          the value is the harness and the adversarial refusal set.
+        </div>
+        <p>
+          <strong><span class="mono">pytest -q</span> runs 83 unit tests</strong> (ruff +
+          mypy clean) over the deterministic parts: parsing guardrails, HTML / Markdown
+          handling, enumerated-list splitting, option de-scrambling, shared-stimulus and
+          stimulus-body grouping, puzzle reading-order, bar-chart geometry, native-chart
+          extraction, the table-scope guard, the synthesis context filters, the fallback
+          gate and voting, routing edges.
+        </p>
+        <p>
+          Beyond the unit tests, the two real documents (a 30-question exam with no answer
+          key, a 134-page 10-K) and the full synthetic corpus are hand-graded against a
+          verified answer key, <span class="mono">test_questions.md</span> holds
+          the copyable battery (PART A: 10 questions, one per format; PART B: 25 covering
+          the exam and the 10-K, with expected answers and which rows should refuse).
+          Several regressions this project hit surfaced only in that full battery, not the
+          unit tests, it is part of the workflow.
+        </p>
+      </section>
+
+      <section id="hardening">
+        <h2>What contact with real documents changed</h2>
+        <p>
+          The system was first built against a clean synthetic corpus. Two real documents
+          (the exam and the 10-K) drove most of the interesting engineering,
+          and each fix generalised to a structural trigger rather than the specific
+          document.
+        </p>
+        <div class="table-scroll">
+          <table>
+            <thead><tr><th>Real-document failure</th><th>Generalised fix</th></tr></thead>
+            <tbody>
+              <tr><td>"Answer to question 3" returned question 1's text</td><td>Numbered-run re-expansion + LLM-extracted <code>ordinals</code> + ordinal pinning in retrieval</td></tr>
+              <tr><td>Q24&ndash;28 depend on a chart the pipeline flattened into scrambled OCR</td><td>Shared-stimulus grouping folds the caption + transcribed chart data into every member's context</td></tr>
+              <tr><td>"FoA revenue Q4 2024 from the bar chart" refused, the chart chunk didn't retrieve</td><td>Vision chart-read emits a searchable caption <em>before</em> the data table</td></tr>
+              <tr><td>"Reality Labs operating loss" fabricated from "grew 22%" prose, verified as supported</td><td>Synthesis barred from back-calculating a figure from a change / rate / ratio</td></tr>
+              <tr><td>"Total headcount" refused, a correct SQL result outvoted by 10-K noise</td><td>A successful table result leads the context; on a <code>table_qa</code> question the cross-doc passages are dropped</td></tr>
+              <tr><td>"Lowest ARPP" answered off an unrelated spreadsheet the user had scoped out</td><td>The Table agent honours "Restrict answers to", scoped schema, and a query naming an out-of-scope table is rejected</td></tr>
+              <tr><td>"The y-axis of the graph" answered about a chart in a different document</td><td>A chart question drops other documents' chart chunks, "the chart" is one chart</td></tr>
+              <tr><td>A row of label boxes on a puzzle page read as a bar chart</td><td><code>_has_bar_chart</code> requires the bars' heights to vary</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="limits">
+        <h2>Limitations &amp; future work</h2>
+        <ul>
+          <li><strong>Bare-numbers financial tables can rank below prose.</strong> A segment row like <span class="mono">Reality Labs (17,729) (16,120)</span> has almost no words for search to match. In the current test pass both segment figures answered correctly first try, but because the router's sub-queries are LLM-generated the outcome is not guaranteed deterministic, the correct figure when the table is retrieved, an honest decline when it isn't, <strong>never a fabricated number</strong>. The full fix (boost table chunks for numeric "value in year Y" lookups) is deferred to avoid regressing the table questions that already work.</li>
+          <li><strong>Open-ended thematic questions are declined.</strong> <em>"What are the main risks related to AI?"</em>: the answer is in the filing but spread across pages; the router doesn't flag it as a whole-section survey, so synthesis declines rather than present a partial list that looks complete. Widening the broad-question detector is the fix.</li>
+          <li><strong>"The chart" is ambiguous across a multi-chart corpus.</strong> With four charts in four documents, a bare <em>"the graph"</em> gets answered from whichever chart ranks first, correctly, for <em>that</em> chart. Qualifying it resolves it.</li>
+          <li><strong>One number-pattern puzzle</strong> (a 23-circle hexagon) is genuinely hard; the fallback declines rather than guess. The other three solve.</li>
+          <li><strong>Latency.</strong> Router + synthesis per turn plus an embedding call; chart and puzzle questions add a vision call, up to three times for the self-consistency vote. Levers: <span class="mono">FAST_MODE</span>, <span class="mono">FALLBACK_VOTES=1</span>, a smaller router, a GPU. Token streaming is next.</li>
+          <li><strong>Page-level citations, not bounding-box.</strong> The box is captured at ingest; the viewer overlay is the next step.</li>
+          <li><strong>Verification is similarity-based.</strong> Robust for extractive answers; a per-citation number check and an NLI entailment check are the remaining work.</li>
+          <li><strong>Enumerated-list handling</strong> keys on the item number as written, so two lists that both start at 1 in one document share ordinals.</li>
+          <li><strong>Heading inference is heuristic</strong> (font-size based); a layout-aware parser would be more robust, declined for the ~2.5 GB PyTorch weight.</li>
+          <li><strong>No audio / video, no web crawling. No auth or multi-tenancy</strong>: one workspace per running instance.</li>
+        </ul>
+      </section>
+
+      <p class="footer-note">Grounded &middot; architecture note &middot; local-first, torch-free, reproducible</p>
+    </main>
+  </div>
+</div>
